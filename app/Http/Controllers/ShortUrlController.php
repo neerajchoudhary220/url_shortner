@@ -56,7 +56,6 @@ class ShortUrlController extends Controller
                 $take = request('length');
     
                 $user = auth()->user();
-                logger()->info($request->company_id);
                 if(auth()->user()->hasRole('SuperAdmin')){
                 $query = ShortUrl::where('company_id',$request->company_id);
                 }

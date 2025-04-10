@@ -22,6 +22,7 @@ Route::middleware('auth')->group(function () {
     Route::controller(DashboardController::class)->prefix('dashboard')->name('dashboard')->group(function () {
         Route::get('/','index');
         Route::get('/company-list','company_list')->name('.company.list');
+        Route::get('/team-member-list','teamMemberList')->name('.team.member.list');
     });
 
     Route::controller(InvitationController::class)->prefix('invite')->name('invite')->group(function () {

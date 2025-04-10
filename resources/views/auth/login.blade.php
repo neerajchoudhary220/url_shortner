@@ -41,20 +41,22 @@
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
-                            <div class="custom-control custom-checkbox text-left mb-4 mt-2">
-                                <input type="checkbox" class="custom-control-input" id="customCheck1" name="remember">
-                                <label class="custom-control-label" for="customCheck1">Remember Me</label>
+                         
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="customCheck1" value="option1">
+                                <label class="form-check-label" for="customCheck1">Remember Me</label>
                             </div>
                             <button class="btn btn-block btn-primary mb-4" type="submit">Sign In</button>
                         </div>
                     </form>
                 </div>
-              
+
             </div>
             <div class="row">
                 <div class="col-12 d-flex justify-content-center text-center">
                     @if (session('error'))
-                        <div class="alert alert-danger alert-msg" >
+                        <div class="alert alert-danger alert-msg">
                             {{ session('error') }}
                         </div>
                     @endif

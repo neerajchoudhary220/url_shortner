@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Company;
+use App\Models\User;
 
 class DashboardController extends Controller
 {
@@ -52,5 +53,40 @@ class DashboardController extends Controller
         }
     }
 
+
+    public function teamMemberList(Request $request){
+        if ($request->ajax()) {
+            $_order = request('order');
+            $_columns = request('columns');
+            $order_by = $_columns[$_order[0]['column']]['name'];
+            $order_dir = $_order[0]['dir'];
+            $search = request('search');
+            $skip = request('start');
+            $take = request('length');
+
+        
+            $query = User::where('company_id',auth()->user()->company_id)->where('id','!=',auth()->user()->id);
+            if (isset($search['value'])) {
+                $query->where('name', 'like', '%' . $search['value'] . '%');
+            };
+
+            $data = $query->orderBy($order_by, $order_dir)->skip($skip)->take($take)->get();
+            $recordsTotal = $query->count();
+
+            $recordsFiltered = $query->count();
+            foreach ($data as $user) {
+                $user->role = $user->getRoleNames()->first();
+                $user->total_generated_url = $user->shortUrls()->count();
+                $user->total_hits = $user->shortUrls()->sum('clicks');
+            }
+
+            return [
+                "draw" => request('draw'),
+                "recordsTotal" => $recordsTotal,
+                'recordsFiltered' => $recordsFiltered,
+                "data" => $data,
+            ];
+        }
+    }
   
 }

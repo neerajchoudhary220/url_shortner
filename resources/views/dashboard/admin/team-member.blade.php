@@ -24,3 +24,12 @@
             </table>
         </div>
     </div>
+
+    @push('custom-js')
+    <script src="{{ asset('assets/js/plugins/datatable/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('assets/js/plugins/datatable/dataTables.bootstrap4.min.js') }}"></script>
+    <script>
+        const team_member_url = "{{ route('dashboard.team.member.list') }}"
+    </script>
+    <script src='{{ asset('assets/js/team-member-dt.js') }}'></script>
+@endpush

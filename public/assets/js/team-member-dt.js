@@ -12,7 +12,7 @@ function memberDt() {
          {
            name: "name",
            data: "name",
-           orderable: true,
+           orderable: false,
  
          },
          {

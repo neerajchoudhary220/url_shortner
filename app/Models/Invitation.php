@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Invitation extends Model
 {
-    protected $fillable = ['email', 'token', 'company_id', 'invited_by', 'role','status'];
+    protected $fillable = ['email', 'token', 'company_id', 'invited_by', 'role','status','user_id'];
 
     public function company(): BelongsTo
     {
@@ -18,4 +18,15 @@ class Invitation extends Model
     {
         return $this->belongsTo(User::class, 'invited_by');
     }
+
+    /**
+     * Get the user that owns the Invitation
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+  
 }

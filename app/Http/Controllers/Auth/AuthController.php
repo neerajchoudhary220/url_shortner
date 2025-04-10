@@ -57,7 +57,7 @@ class AuthController extends Controller
 
             $user = User::create($register_data);
             $user->assignRole($invitation->role);
-            $invitation->update(['status'=>true]);
+            $invitation->update(['status'=>true,'user_id'=>$user->id]);
             Auth::login($user);
             DB::commit();
             return redirect()->route('dashboard')

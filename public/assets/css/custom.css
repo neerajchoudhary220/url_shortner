@@ -1,0 +1,74 @@
+:root{
+    --light-yellow:#ffc10770;
+}
+
+.bg-light-yellow{
+    background-color: var(--light-yellow);
+
+}
+
+.imageUploader{
+    position: relative;
+    width: 230px !important;
+  
+  }
+  
+  #imageView{
+    height: 210px !important;
+     width: 230px !important;
+    border: gray solid 1px;
+    border-radius: 2%;
+    padding: 2px;
+    position: relative;
+  }
+  #imageView>img{
+    width: 100%; 
+    height:100%;
+  }
+  #fileField{display: none;}
+
+
+
+  .breadcrumb-item + .breadcrumb-item::before {
+    display: inline-block;
+    padding-right: 0.5rem;
+    color: #6c757d;
+    content: "/" !important;
+}
+
+.dataTables_filter,.dataTables_paginate{
+  position: absolute;
+  right: 15px;
+}
+
+button.close {
+  position: absolute;
+  top: 1px;
+  color:#fff;
+  right: 5px;
+}
+  
+label.required::after {
+  content: "*";
+  color: red;
+}
+
+i.sync_btn {
+  font-size: x-large;
+  margin-top: 6px;
+  cursor: pointer;
+}
+
+/* Add this CSS */
+.rotate {
+  animation: rotateAnimation 1s linear infinite;
+}
+
+@keyframes rotateAnimation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

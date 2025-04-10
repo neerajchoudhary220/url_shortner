@@ -64,8 +64,10 @@ class DashboardController extends Controller
             $skip = request('start');
             $take = request('length');
 
-        
-            $query = User::where('company_id',auth()->user()->company_id)->where('id','!=',auth()->user()->id);
+            $user =auth()->user();
+            $query = User::where('company_id',$user->company_id)->where('id','!=',$user->id)->whereHas('sentInvitations',function($q) use ($user){
+                $q->where('invited_by',$user->id);
+            });
             if (isset($search['value'])) {
                 $query->where('name', 'like', '%' . $search['value'] . '%');
             };

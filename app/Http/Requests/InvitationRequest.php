@@ -24,6 +24,9 @@ class InvitationRequest extends FormRequest
                 Rule::unique('users', 'email'), // Correct way to check email doesn't exist
             ],
         ];
+        if(auth()->user()->hasRole('Admin')){
+            $rules['role'] = 'required|in:Admin,Member';
+        }
         if(auth()->user()->hasRole('SuperAdmin')){
             $rules['company_id'] = 'required|exists:companies,id';
         }
@@ -39,7 +42,10 @@ class InvitationRequest extends FormRequest
             'name.min' => 'Name must be at least 3 characters.',
             'name.max' => 'Name may not be greater than 20 characters.',
             'company_id.required'=>'Company id is required',
-            'company_id.exists'=>'Invalid given company id'
+            'company_id.exists'=>'Invalid given company id',
+            'role.required'=>'Role is required',
+            'role.in'=>'Invalid Role',
+
         ];
     }
 }

@@ -4,7 +4,7 @@
 
             <h5 class="m-auto">Team Members</h5>
             <div>
-                {{-- <a href=""><button class="btn btn-primary">Add New Company</button></a> --}}
+                <a href="{{ route('invite') }}" class="btn btn-primary invite-btn">Invite</a>
             </div>
         </div>
 

@@ -39,7 +39,7 @@ class InvitationController extends Controller
                 'email' => $request->email,
                 'name' => $request->name,
                 'token' => Str::random(32),
-                'company_id' => auth()->user()->hasRole('Admin') ? null : $request->company_id,
+                'company_id' => auth()->user()->hasRole('Admin') ? auth()->user()->company_id : $request->company_id,
                 'invited_by' => auth()->user()->id,
                 'role' => auth()->user()->hasRole('SuperAdmin') ? 'Admin' : $request->role,
             ];

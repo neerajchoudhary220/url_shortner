@@ -33,7 +33,7 @@
                         <div class="row">
                             <div @class(['col-4'=>auth()->user()->hasRole('Admin'),'col-6','mb-3'])>
                                 <div class="form-group">
-                                    <label class="form-label" for="name">Name</label>
+                                    <label class="form-label required" for="name">Name</label>
                                     <input type="text" name="name"
                                         class="form-control" value="{{ old('name') }}">
                                         @error('name')
@@ -43,7 +43,7 @@
                             </div>
                             <div @class(['col-4'=>auth()->user()->hasRole('Admin'),'col-6','mb-3'])>
                                 <div class="form-group">
-                                    <label class="form-label" for="invite-email">Email</label>
+                                    <label class="form-label required" for="invite-email">Email</label>
                                     <input type="email" name="email" id="invite-email"
                                         class="form-control" value="{{ old('email') }}">
                                         @error('email')
@@ -56,8 +56,9 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label class="form-label" for="invite-role">Select Role:</label>
-                                    <select class="form-input" name="role">
-                                        <option>A</option>
+                                    <select class="form-control" name="role">
+                                        <option value="Admin">Admin</option>
+                                        <option value="Member">Member</option>
                                     </select>
                                 </div>
                             </div>

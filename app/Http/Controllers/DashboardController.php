@@ -23,6 +23,7 @@ class DashboardController extends Controller
             $skip = request('start');
             $take = request('length');
 
+          
             $query = Company::query();
             if (isset($search['value'])) {
                 $query->where('name', 'like', '%' . $search['value'] . '%');
@@ -35,9 +36,9 @@ class DashboardController extends Controller
             $i = 1;
             foreach ($data as $d) {
                 $d->index_column = $i;
-                $d->total_generated_url=0;
-                $d->total_url_hits=0;
-                $d->total_users=0;
+                $d->total_generated_url=$d->shortUrls()->count();
+                $d->total_url_hits=$d->shortUrls()->sum('clicks');
+                $d->total_users=$d->users()->count();
                 $i++;
                 $d->action = view('dashboard.super_admin.company-table-action', compact('d'))->render();
             }

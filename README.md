@@ -1,9 +1,11 @@
 # URL Shortener Service
 
 A **Laravel 12**-based URL shortening service with company management, user roles, and an invitation system.  
-> ⚠️ Requires **PHP 8.2 or higher**.
 
----
+### Prerequisites
+- PHP 8.2+
+- Composer 2.0+
+- MySQL 5.7+/MariaDB 10.3+
 
 ## 📦 Installation Process
 

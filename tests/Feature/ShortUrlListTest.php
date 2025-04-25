@@ -10,7 +10,9 @@ class ShortUrlListTest extends TestCase
     use RefreshDatabase;
     public function test_member_can_see_the_short_url_list()
     {
-        $member = User::factory()->withRole('Member')->withShortUrls(10)->create();
+        $count=10;
+        $member = User::factory()->withRole('Member')->withShortUrls($count)->create();
+        $this->assertDatabaseCount('short_urls',$count); //Verify number of short urls records
         $this->actingAs($member);
         $response_for_short_url_list = $this->get(route('shortUrl.list', $member->company_id));
         $response_for_short_url_list->assertStatus(200);
@@ -18,10 +20,12 @@ class ShortUrlListTest extends TestCase
 
     public function test_admin_can_see_the_short_url_list()
     {
-        $member = User::factory()->withRole('Member')->withShortUrls(10)->create();
+        $count=10;
+        $member = User::factory()->withRole('Member')->withShortUrls($count)->create();
+        $this->assertDatabaseCount('short_urls',$count); //Verify number of short urls records
         $admin = User::factory()->withRole('Admin')->create();
         $this->actingAs($admin);
-        $this->assertAuthenticatedAs($admin); //check admin is authenticated
+        $this->assertAuthenticatedAs($admin); //Check admin is authenticated
 
         $response_for_short_url_list = $this->get(route('shortUrl.list', $member->company_id));
         $response_for_short_url_list->assertStatus(200);
@@ -30,10 +34,12 @@ class ShortUrlListTest extends TestCase
 
     public function test_super_admin_can_see_all_short_url_list()
     {
-        $admin = User::factory()->withRole('admin')->withShortUrls(10)->create();//creating short urls by admin
+        $count=10;
+        $admin = User::factory()->withRole('admin')->withShortUrls($count)->create();//creating short urls by admin
+        $this->assertDatabaseCount('short_urls',$count); //Verify number of short urls records
         $superAdmin = User::factory()->withRole('SuperAdmin')->create();
         $this->actingAs($superAdmin);
-        $this->assertAuthenticatedAs($superAdmin); //check super admin is authenticated
+        $this->assertAuthenticatedAs($superAdmin); //Check super admin is authenticated
         $response_for_short_url_list = $this->get(route('shortUrl.list', $admin->company_id));
         $response_for_short_url_list->assertStatus(200);
     }

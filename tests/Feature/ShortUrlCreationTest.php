@@ -19,7 +19,7 @@ class ShortUrlCreationTest extends TestCase
     }
 
 
-    public function test_admin_can_create_short_url_and_see_the_list()
+    public function test_admin_can_create_short_url()
     {
         $admin = User::factory()->withRole('Admin')->create();
         $response = $this->createShortUrl($admin);
@@ -33,12 +33,19 @@ class ShortUrlCreationTest extends TestCase
             'company_id' => $company_id
         ]);
 
-        //check admin short url list
-        $response_for_short_url_list = $this->get(route('shortUrl.list', $company_id));
+
+    }
+
+    public function test_admin_can_see_short_url_list()
+    {
+        $admin = User::factory()->withRole('Admin')->create();
+        $this->actingAs($admin);
+        $shortUrl = ShortUrl::factory()->for($admin)->for($admin->company)->create();
+        $response_for_short_url_list = $this->get(route('shortUrl.list', $shortUrl->company_id));
         $response_for_short_url_list->assertStatus(200);
     }
 
-    public function test_member_can_create_short_url_and_see_list()
+    public function test_member_can_create_short_url()
     {
         $member = User::factory()->withRole('Member')->create();
         $response = $this->createShortUrl($member);
@@ -55,6 +62,15 @@ class ShortUrlCreationTest extends TestCase
         $response_for_short_url_list->assertStatus(200);
     }
 
+    public function test_member_can_see_short_url_list(){
+        $member = User::factory()->withRole('Member')->create();
+        $this->actingAs($member);
+        $shortUrl = ShortUrl::factory()->for($member)->for($member->company)->create();
+        $response_for_short_url_list = $this->get(route('shortUrl.list', $shortUrl->company_id));
+        $response_for_short_url_list->assertStatus(200);
+
+    }
+
     public function test_super_admin_cannot_create_short_url()
     {
         $superAdmin = User::factory()->withRole('SuperAdmin')->create();
@@ -65,22 +81,22 @@ class ShortUrlCreationTest extends TestCase
         ]);
     }
 
-    public function test_short_url_publicly_resolvable_and_redirect_to_the_original_url(){
+    public function test_short_url_publicly_resolvable_and_redirect_to_the_original_url()
+    {
         $user = User::factory()->withRole('Admin')->create();
-        $company = $user->company;
-        $short_url = ShortUrl::factory()->for($user)->for($company)->create();
+        $short_url = ShortUrl::factory()->for($user)->for($user->company)->create();
         $short_code = $short_url->short_code;
 
+
         //verify short url data
-        $this->assertDatabaseHas('short_urls',[
-            'id'=>$short_url->id,
-            'company_id'=>$short_url->company_id,
-            'original_url'=>$short_url->original_url,
-            'short_code'=>$short_code,
+        $this->assertDatabaseHas('short_urls', [
+            'id' => $short_url->id,
+            'company_id' => $short_url->company_id,
+            'original_url' => $short_url->original_url,
+            'short_code' => $short_code,
         ]);
 
-        $response_original_url = $this->get(route('shortUrl.redirect',$short_code));
+        $response_original_url = $this->get(route('shortUrl.redirect', $short_code));
         $response_original_url->assertRedirect();
-
     }
 }

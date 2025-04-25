@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Company;
+use App\Models\ShortUrl;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -26,7 +27,6 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        // $company_id = Company::factory();
 
         return [
             'name' => fake()->name(),
@@ -56,16 +56,19 @@ class UserFactory extends Factory
             }
         );
     }
+    public function withShortUrls(int $count = 100): static
+    {
+        return $this->afterCreating(function (User $user) use ($count) {
+            $remaining = $count;
+            while ($remaining > 0) {
+                $createCount = min(100, $remaining);
+                ShortUrl::factory($createCount)
+                    ->for($user)
+                    ->for($user->company)
+                    ->create();
+                $remaining -= $createCount;
+            }
+        });
+    }
 
-
-
-    // public function admin(): static
-    // {
-    //     return $this->withRole('Admin');
-    // }
-
-    // public function member(): static
-    // {
-    //     return $this->withRole('Member');
-    // }
 }

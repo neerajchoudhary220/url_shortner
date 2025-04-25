@@ -32,8 +32,10 @@ Route::middleware('auth')->group(function () {
 
     Route::controller(ShortUrlController::class)->prefix('shortUrl')->name('shortUrl')->group(function(){
         Route::get('show-list/{company}','index')->name('.show.list');
-        Route::get('/generate-short-url','showGenerateUrlForm')->name('.generate');
-        Route::post('/generate-short-url','generateShortUrl');
+        Route::middleware('AllowGenerateShortUrl')->group(function(){
+            Route::get('/generate-short-url','showGenerateUrlForm')->name('.generate');
+            Route::post('/generate-short-url','generateShortUrl');
+        });
         Route::get('/list/{company_id?}','shortUrlList')->name('.list');
         Route::get('/s/{code}','redirect')->name('.redirect');
 

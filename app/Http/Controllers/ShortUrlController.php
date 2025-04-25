@@ -45,7 +45,7 @@ class ShortUrlController extends Controller
 
     public function shortUrlList(Request $request){
         try {
-            
+
             if ($request->ajax()) {
                 $_order = request('order');
                 $_columns = request('columns');
@@ -54,7 +54,7 @@ class ShortUrlController extends Controller
                 $search = request('search');
                 $skip = request('start');
                 $take = request('length');
-    
+
                 $user = auth()->user();
                 if(auth()->user()->hasRole('SuperAdmin')){
                 $query = ShortUrl::where('company_id',$request->company_id);
@@ -64,15 +64,15 @@ class ShortUrlController extends Controller
                 }else if(auth()->user()->hasRole('Member')){
                     $query = ShortUrl::where('company_id',$user->company_id)->where('user_id',$user->id);
                 }
-    
+
                 if (isset($search['value'])) {
                     $query->where('short_code', 'like', '%' . $search['value'] . '%')
                     ->where('original_url', 'like', '%' . $search['value'] . '%');
                 };
-    
+
                 $data = $query->orderBy($order_by, $order_dir)->skip($skip)->take($take)->get();
                 $recordsTotal = $query->count();
-    
+
                 $recordsFiltered = $query->count();
                 foreach ($data as $d) {
                     $short_url_route = route('shortUrl.redirect', $d->short_code);
@@ -81,7 +81,7 @@ class ShortUrlController extends Controller
                     HTML;
                     $d->date = Carbon::parse($d->created_at)->format('Y-m-d');
                 }
-    
+
                 return [
                     "draw" => request('draw'),
                     "recordsTotal" => $recordsTotal,
@@ -92,7 +92,7 @@ class ShortUrlController extends Controller
         } catch (\Exception $e) {
           logger()->error($e);
         }
-       
+
     }
 
     public function redirect($code){

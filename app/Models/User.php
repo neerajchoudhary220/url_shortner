@@ -73,7 +73,7 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Company::class);
     }
-    
+
 
     /**
      * Get all of the comments for the User

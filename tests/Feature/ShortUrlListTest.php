@@ -32,7 +32,7 @@ class ShortUrlListTest extends TestCase
     }
 
 
-    public function test_super_admin_can_see_all_short_url_list()
+    public function test_super_admin_can_see_all_the_short_url_list()
     {
         $count=10;
         $admin = User::factory()->withRole('admin')->withShortUrls($count)->create();//creating short urls by admin

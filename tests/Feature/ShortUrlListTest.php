@@ -7,37 +7,67 @@ use Tests\TestCase;
 
 class ShortUrlListTest extends TestCase
 {
+
     use RefreshDatabase;
-    public function test_member_can_see_the_short_url_list()
+    protected function createTestUser(string $role):User{
+            return User::factory()->withRole($role)->create();
+    }
+    public function test_member_can_see_their_own_short_url_list_but_cannot_see_another_member_short_urls()
     {
-        $count=10;
-        $member = User::factory()->withRole('Member')->withShortUrls($count)->create();
-        $this->assertDatabaseCount('short_urls',$count); //Verify number of short urls records
-        $this->actingAs($member);
-        $response_for_short_url_list = $this->get(route('shortUrl.list', $member->company_id));
-        $response_for_short_url_list->assertStatus(200);
+        $member1 = $this->createTestUser('Member');
+        $member2 = $this->createTestUser('Member');
+        $this->actingAs($member1);
+        // Authorized member can access their own urls
+        $res1 = $this->get(route(
+            'shortUrl.list',
+            [
+                'company_id' => $member1->company->id,
+                'user_id' => $member1->id
+            ]
+        ));
+
+        $res1->assertStatus(200);
+
+        //Authorized member cannot access to another member's url's
+        $res2 = $this->get(route(
+            'shortUrl.list',
+            [
+                'company_id' => $member2->company->id,
+                'user_id' => $member2->id
+            ]
+        ));
+        $res2->assertStatus(403);
     }
 
-    public function test_admin_can_see_the_short_url_list()
+    public function test_admin_can_see_their_own_short_url_list_but_cannot_set_another_member_short_urls()
     {
-        $count=10;
-        $member = User::factory()->withRole('Member')->withShortUrls($count)->create();
-        $this->assertDatabaseCount('short_urls',$count); //Verify number of short urls records
-        $admin = User::factory()->withRole('Admin')->create();
-        $this->actingAs($admin);
-        $this->assertAuthenticatedAs($admin); //Check admin is authenticated
+        $admin1 = $this->createTestUser('Admin');
+        $admin2 = $this->createTestUser('Admin');
+        $this->actingAs($admin1);
+        //Authorized member access their own compnay urls
+        $res1 = $this->get(route(
+            'shortUrl.list',
+            [
+                'company_id' => $admin1->company->id,
+            ]
+        ));
+        $res1->assertStatus(200);
 
-        $response_for_short_url_list = $this->get(route('shortUrl.list', $member->company_id));
-        $response_for_short_url_list->assertStatus(200);
+        //Authorized member cannot access other admin's company
+        $res2=$this->get(route( 'shortUrl.list',
+        [
+            'company_id' => $admin2->company->id,
+        ]));
+        $res2->assertStatus(403);
+
+
     }
 
 
     public function test_super_admin_can_see_all_the_short_url_list()
     {
-        $count=10;
-        $admin = User::factory()->withRole('admin')->withShortUrls($count)->create();//creating short urls by admin
-        $this->assertDatabaseCount('short_urls',$count); //Verify number of short urls records
-        $superAdmin = User::factory()->withRole('SuperAdmin')->create();
+        $admin = $this->createTestUser('Admin'); //creating short urls by admin
+        $superAdmin =$this->createTestUser('SuperAdmin');
         $this->actingAs($superAdmin);
         $this->assertAuthenticatedAs($superAdmin); //Check super admin is authenticated
         $response_for_short_url_list = $this->get(route('shortUrl.list', $admin->company_id));

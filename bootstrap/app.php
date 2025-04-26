@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AllowShortUrls;
 use App\Http\Middleware\UserAbleShorturl;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -13,7 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'AllowGenerateShortUrl'=>UserAbleShorturl::class
+            'AllowGenerateShortUrl'=>UserAbleShorturl::class,
+            'AllowShortUrls'=>AllowShortUrls::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

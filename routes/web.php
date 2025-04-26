@@ -29,16 +29,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/{company_id?}', 'index');
         Route::post('store', 'store')->name('.store');
     });
-
     Route::controller(ShortUrlController::class)->prefix('shortUrl')->name('shortUrl')->group(function(){
         Route::get('show-list/{company}','index')->name('.show.list');
         Route::middleware('AllowGenerateShortUrl')->group(function(){
             Route::get('/generate-short-url','showGenerateUrlForm')->name('.generate');
             Route::post('/generate-short-url','generateShortUrl');
         });
-        Route::get('/list/{company_id?}','shortUrlList')->name('.list');
+        Route::get('/list/{company_id?}/{user_id?}','shortUrlList')->name('.list')->middleware('AllowShortUrls');
         Route::get('/s/{code}','redirect')->name('.redirect');
-
     });
 
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');

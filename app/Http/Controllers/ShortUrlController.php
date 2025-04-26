@@ -14,8 +14,10 @@ use Illuminate\Support\Str;
 class ShortUrlController extends Controller
 {
 
-    public function index(Company $company){
-        return view('short_url.index',compact('company'));
+    public function index(Company $company)
+    {
+
+        return view('short_url.index', compact('company'));
     }
 
     public function showGenerateUrlForm()
@@ -43,31 +45,46 @@ class ShortUrlController extends Controller
         }
     }
 
-    public function shortUrlList(Request $request){
+    public function shortUrlList(Request $request, $company_id = null,)
+    {
         try {
 
+            $user = $request->user();
+
+            // // If user_id is provided, verify it matches the authenticated user
+            // logger()->info($request->user_id && $user->id != $request->user_id);
+            // if($user->hasRole('Member')){
+            //     if ($request->user_id && $user->id != $request->user_id) {
+            //         abort(403, 'Not authorized to access other users\' short URLs');
+            //     }
+            //     // If company_id is provided, verify the user belongs to that company
+            //     if ($company_id && $user->company->id != $company_id) {
+            //         abort(403, 'Not authorized to access this company\'s short URLs');
+            //     }
+            // }
+
+
             if ($request->ajax()) {
+
                 $_order = request('order');
                 $_columns = request('columns');
-                $order_by = $_columns[$_order[0]['column']]['name']=='short_url'?'id':$_columns[$_order[0]['column']]['name'];
+                $order_by = $_columns[$_order[0]['column']]['name'] == 'short_url' ? 'id' : $_columns[$_order[0]['column']]['name'];
                 $order_dir = $_order[0]['dir'];
                 $search = request('search');
                 $skip = request('start');
                 $take = request('length');
 
-                $user = auth()->user();
-                if(auth()->user()->hasRole('SuperAdmin')){
-                $query = ShortUrl::where('company_id',$request->company_id);
-                }
-                elseif(auth()->user()->hasRole('Admin')){
-                $query = ShortUrl::where('company_id',$user->company_id);
-                }else if(auth()->user()->hasRole('Member')){
-                    $query = ShortUrl::where('company_id',$user->company_id)->where('user_id',$user->id);
+                if ($user->hasRole('SuperAdmin')) {
+                    $query = ShortUrl::where('company_id', $request->company_id);
+                } elseif ($user->hasRole('Admin')) {
+                    $query = ShortUrl::where('company_id', $user->company_id);
+                } else if ($user->hasRole('Member')) {
+                    $query = ShortUrl::where('company_id', $user->company_id)->where('user_id', $user->id);
                 }
 
                 if (isset($search['value'])) {
                     $query->where('short_code', 'like', '%' . $search['value'] . '%')
-                    ->where('original_url', 'like', '%' . $search['value'] . '%');
+                        ->where('original_url', 'like', '%' . $search['value'] . '%');
                 };
 
                 $data = $query->orderBy($order_by, $order_dir)->skip($skip)->take($take)->get();
@@ -90,12 +107,12 @@ class ShortUrlController extends Controller
                 ];
             }
         } catch (\Exception $e) {
-          logger()->error($e);
+            logger()->error($e);
         }
-
     }
 
-    public function redirect($code){
+    public function redirect($code)
+    {
         $shortUrl = ShortUrl::where('short_code', $code)->firstOrFail();
         $shortUrl->increment('clicks');
         return redirect($shortUrl->original_url);

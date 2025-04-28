@@ -37,10 +37,9 @@
     <script src="{{ asset('assets/js/plugins/datatable/dataTables.bootstrap4.min.js') }}"></script>
     <script>
        const  short_url_list = "{{ isset($company)?route('shortUrl.list',$company->id):route('shortUrl.list') }}"
-       console.log("short_url_list:",short_url_list)
     </script>
     <script>
-    const export_csv_url = "{{ route('shortUrl.export.csv') }}"
+    const export_csv_url = "{{ route('shortUrl.export.csv',$company->id) }}"
         </script>
     <script src='{{ asset('assets/js/short-url-dt.js') }}'></script>
 

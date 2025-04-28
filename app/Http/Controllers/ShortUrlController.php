@@ -105,9 +105,12 @@ class ShortUrlController extends Controller
     {
         try {
             if ($request->ajax()) {
-                $data = $request->data;
+                $company_id = $request->company_id;
+                if(!Company::find($company_id)){
+                    return response()->json(['msg'=>'Company is not found!',404]);
+                }
                 $user = auth()->user();
-                ProcessShortUrlExportJob::dispatch($data,$user);
+                ProcessShortUrlExportJob::dispatch($user,$company_id);
                 return response()->json([
                     'msg' => "Your CSV file will be sent via email to your email address."
                 ]);

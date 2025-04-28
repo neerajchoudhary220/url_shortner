@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Exports\ShortUrlExport;
 use App\Mail\ExportReadyFile;
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -14,15 +15,15 @@ use Maatwebsite\Excel\Facades\Excel;
 class ProcessShortUrlExportJob implements ShouldQueue
 {
     use Queueable;
-    protected $data;
     protected $user;
+    protected $company_id;
     /**
      * Create a new job instance.
      */
-    public function __construct(array $data,User $user)
+    public function __construct(User $user, int $company_id)
     {
-        $this->data = $data;
         $this->user = $user;
+        $this->company_id = $company_id;
     }
 
     /**
@@ -32,19 +33,19 @@ class ProcessShortUrlExportJob implements ShouldQueue
     {
         try {
             $user = $this->user;
-            logger()->info(['user'=>$user]);
-            logger()->info($user->id);
-            $export = new ShortUrlExport($this->data);
-            $encrypted_user_id = sha1($user->id).'_'.now()->timestamp;
+            $encrypted_user_id = sha1($user->id) . '_' . now()->timestamp;
             $filename = "short_url{$encrypted_user_id}.csv";
-            $path = config('constant.csv_file_path').$filename;
-            Excel::store($export, $path, 'public', \Maatwebsite\Excel\Excel::CSV);
-            Mail::to($user->email)->send(new ExportReadyFile($user,$filename,$encrypted_user_id));
-            logger()->info("Sent file successfully");
+            $path = config('constant.csv_file_path') . $filename;
+            $export = (new ShortUrlExport)->forCompany($this->company_id);
+
+            if ($user->hasRole('SuperAdmin')) {
+                $export->storeExcel($path, 'public');
+            } else {
+                $export->forUser($this->user->id)->storeExcel($path, 'public');
+            }
+            Mail::to($user->email)->send(new ExportReadyFile($user, $filename, $encrypted_user_id));
         } catch (\Exception $e) {
             logger()->error($e);
         }
     }
-
-
 }

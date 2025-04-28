@@ -55,7 +55,7 @@ class ShortUrlExport implements WithHeadings, FromQuery,WithMapping
         ];
     }
 
-    public function storeExcel(string $path, string $disk = 'public', string $writerType = Excel::CSV)
+    public function storeExcel(string $path, string $disk = env('FILESYSTEM_DISK'), string $writerType = Excel::CSV)
     {
         return $this->store($path, $disk, $writerType);
     }

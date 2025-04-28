@@ -1,7 +1,6 @@
 <?php
 
 namespace Tests\Feature;
-
 use App\Models\ShortUrl;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -48,7 +47,6 @@ class ShortUrlCreationTest extends TestCase
             'user_id' => $member->id,
             'company_id' => $company_id
         ]);
-
         //check member short url list
         $response_for_short_url_list = $this->get(route('shortUrl.list', $company_id));
         $response_for_short_url_list->assertStatus(200);

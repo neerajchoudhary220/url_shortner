@@ -37,6 +37,8 @@ Route::middleware('auth')->group(function () {
         });
         Route::get('/list/{company_id?}/{user_id?}','shortUrlList')->name('.list')->middleware('AllowShortUrls');
         Route::get('/s/{code}','redirect')->name('.redirect');
+        Route::post('export-csv','exportToCsv')->name('.export.csv');
+        Route::get('download-csv-file/{encrypted_user_id}','downloadCsvFile')->name('.downloadCsvFile');
     });
 
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');

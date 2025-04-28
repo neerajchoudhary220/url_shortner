@@ -5,9 +5,15 @@
         @else
         <h5 class="m-auto">Generated Short URLs Of {{ $company->name }}</h5>
         @endif
+        @unless(auth()->user()->hasRole('SuperAdmin'))
         <div>
         <a href="{{ route('shortUrl.generate') }}"><button class="btn btn-primary">Generate</button></a>
         </div>
+        @endunless
+        <div>
+            <a href="#"><button class="btn btn-secondary ml-3" id="export_csv_btn">Export CSV</button></a>
+            </div>
+
     </div>
 
     <div class="card-body mt-3">
@@ -33,5 +39,9 @@
        const  short_url_list = "{{ isset($company)?route('shortUrl.list',$company->id):route('shortUrl.list') }}"
        console.log("short_url_list:",short_url_list)
     </script>
+    <script>
+    const export_csv_url = "{{ route('shortUrl.export.csv') }}"
+        </script>
     <script src='{{ asset('assets/js/short-url-dt.js') }}'></script>
+
 @endpush
